@@ -62,7 +62,7 @@ class JointSprings(object):
     virtual springs.
     """
     def __init__(self,
-                 limb = arm,
+                 limb,
                  rate = 1000.0,
                  missed_cmds = 20.0,
                  des_angles = dict(),
@@ -87,7 +87,7 @@ class JointSprings(object):
         self.t_release = rospy.get_time()
         self._imp_ctrl_is_active = True
         for joint in self._limb.joint_names():
-            self._springs[joint] = 30
+            self._springs[joint] = 100
             self._damping[joint] = 4
 
     def _imp_ctrl_active(self, inp):
@@ -128,10 +128,6 @@ class JointSprings(object):
 
         # print self._springs
         self.adjust_springs()
-
-        # disable cuff interaction
-        if self._imp_ctrl_is_active:
-            self._pub_cuff_disable.publish()
 
         # create our command dict
         cmd = dict()
@@ -174,13 +170,8 @@ class JointSprings(object):
         self._limb.set_command_timeout((1.0 / self._rate) * self._missed_cmds)
         i = 0
         # loop at specified rate commanding new joint torques
-        while not rospy.is_shutdown():
-            if not self._rs.state().enabled:
-                rospy.logerr("Joint torque example failed to meet "
-                             "specified control rate timeout.")
-                break
+        for i in range(1000):
             self._update_forces()
-            print(i)
             control_rate.sleep()
 
     def clean_shutdown(self):
@@ -217,9 +208,10 @@ def angle_action_server():
     rospy.init_node('angle_action_server', anonymous=True)
     global arm
     global js
-    js = JointSprings()
+    
     arm = ii.Limb('right')
     arm.set_joint_position_speed(0.1)
+    js = JointSprings(arm)
     s = rospy.Service('angle_action', angle_action, execute_action)
     rospy.spin()
 

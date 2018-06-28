@@ -49,7 +49,7 @@ class SawyerEnv(Env, Serializable):
         self.safety_force_magnitude = safety_force_magnitude
         self.safety_force_temp = safety_force_temp
         self.AnglePDController = AnglePDController()
-
+        self.joint_space_impd = action_mode == 'joint_space_impd'
         max_torques = 1/2 * np.array([8, 7, 6, 5, 4, 3, 2])
         self.joint_torque_high = max_torques
         self.joint_torque_low = -1 * max_torques
@@ -77,6 +77,7 @@ class SawyerEnv(Env, Serializable):
                        pos_high = np.array([0.75, 0.32, 0.5]),
                        torq_low = np.array([0.2, -0.2, .03]),
                        torq_high = np.array([0.6, 0.2, 0.5]),
+    
                     ):
         self.ee_safety_box_high = pos_high
         self.ee_safety_box_low = pos_low
@@ -429,7 +430,7 @@ class SawyerEnv(Env, Serializable):
         rospy.wait_for_service('angle_action')
         try:
             execute_action = rospy.ServiceProxy('angle_action', angle_action, persistent=True)
-            resp = execute_action(angles, self.thresh)
+            resp = execute_action(angles, self.thresh, self.joint_space_impd)
             return (
                     None
             )
