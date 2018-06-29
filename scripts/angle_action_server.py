@@ -135,7 +135,7 @@ class JointSprings(object):
         cur_pos = self._limb.joint_angles()
         cur_vel = self._limb.joint_velocities()
         # calculate current forces
-
+        import ipdb; ipdb.set_trace()
         for joint in self._des_angles.keys():
             # spring portion
             cmd[joint] = self._springs[joint] * (self._des_angles[joint] -
@@ -168,7 +168,6 @@ class JointSprings(object):
         # if the specified number of command cycles are missed, the robot
         # will timeout and disable
         self._limb.set_command_timeout((1.0 / self._rate) * self._missed_cmds)
-        i = 0
         # loop at specified rate commanding new joint torques
         for i in range(1000):
             self._update_forces()
@@ -208,9 +207,8 @@ def angle_action_server():
     rospy.init_node('angle_action_server', anonymous=True)
     global arm
     global js
-    
     arm = ii.Limb('right')
-    arm.set_joint_position_speed(0.1)
+    arm.set_joint_position_speed(0.3)
     js = JointSprings(arm)
     s = rospy.Service('angle_action', angle_action, execute_action)
     rospy.spin()
