@@ -12,7 +12,7 @@ def pos():
 total = np.zeros(3)
 for i in range(10):
 
-	delta = np.random.uniform(-0.1, 0.1, 3)
+	delta = np.random.uniform(-0.05, 0.05, 3)
 	curtime = time.time()
 	cur = pos()
 	env._joint_act(delta)

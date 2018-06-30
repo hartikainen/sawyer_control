@@ -1,9 +1,10 @@
 from collections import OrderedDict
+from railrl.envs.multitask.multitask_env import MultitaskEnv
 import numpy as np
 from sawyer_control.sawyer_env_base import SawyerEnv
 from rllab.spaces.box import Box
 from sawyer_control.serializable import Serializable
-from railrl.envs.multitask.multitask_env import MultitaskEnv
+
 
 JOINT_ANGLES_HIGH = np.array([
     1.70167993,

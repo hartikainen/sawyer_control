@@ -191,6 +191,7 @@ def execute_action(action_msg):
     joint_space_impd = action_msg.joint_space_impd
     joint_names = arm.joint_names()
     joint_to_values = dict(zip(joint_names, action))
+    import ipdb; ipdb.set_trace()
     if joint_space_impd:
         js._des_angles = joint_to_values
         js.attach_springs()
