@@ -687,6 +687,7 @@ class SawyerXYPushingImgMultitaskEnv(SawyerEnv, MultitaskEnv):
         self.desired = np.zeros((4))
         self.action_mode = 'position'
         self.reset_position = [.1, .2, self.z]
+        self.set_safety_box()
         #set pushing safety box here
         #goals are push the object to a spot, then reach a different position
         high = self.pushing_box_high #make sure to concatenate with itself
@@ -759,30 +760,15 @@ class SawyerXYPushingImgMultitaskEnv(SawyerEnv, MultitaskEnv):
         return -np.linalg.norm(next_observation[21:24] - goal)
 
     def reset(self, vae_reset=False):
-        if vae_reset:
-            input()
-            #PAUSE AND MOVE OBJECT TO ITS RESET POSITION
-        self.in_reset = True
+        self.thresh = False
         # self._safe_move_to_neutral()
-        self._joint_act(self.z - self._end_effector_pose[:3])
-        self.in_reset = False
+        self._joint_act(self.reset_position - self._end_effector_pose[:3])
+        self.thresh = True
         if self.img_observation:
             observation = self.get_image()
         else:
             observation = self._get_observation()
         return observation
-
-    def _joint_act(self, action):
-        ee_pos = self._end_effector_pose()
-        if self.relative_pos_control:
-            target_ee_pos = (ee_pos[:3] + action)
-        else:
-            target_ee_pos = action
-        target_ee_pos[2] = self.z
-        target_ee_pos[:2] = np.clip(target_ee_pos[:2], self.pushing_box_low, self.pushing_box_high)
-        target_ee_pos = np.concatenate((target_ee_pos, ee_pos[3:]))
-        angles = self.request_ik_angles(target_ee_pos, self._joint_angles())
-        self.send_angle_action(angles)
 
     def _get_observation(self):
         angles = self._joint_angles()
@@ -814,26 +800,5 @@ class SawyerXYPushingImgMultitaskEnv(SawyerEnv, MultitaskEnv):
 
 
     def _get_statistics_from_paths(self, paths):
-        statistics = OrderedDict()
-        stat_prefix = 'Test'
-        #distances_from_target = np.array([path['distance_to_goal'] for path in paths]).flatten()
-        distances_from_target = []
-        final_position_distances = []
-        for path in paths:
-            distances_from_target += [p['distance_to_goal'] for p in path['env_infos']]
-            final_position_distances += [[p['distance_to_goal'] for p in path['env_infos']][-1]]
-        final_position_distances = np.array(final_position_distances)
-        distances_from_target = np.array(distances_from_target)
-        statistics.update(self._update_statistics_with_observation(
-            distances_from_target,
-            stat_prefix,
-            'End Effector Distance from Target'
-        ))
 
-        statistics.update(self._update_statistics_with_observation(
-            final_position_distances,
-            stat_prefix,
-            'Final End Effector Distance from Target'
-        ))
-
-        return statistics
+        return OrderedDict()

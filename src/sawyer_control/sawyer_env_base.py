@@ -73,7 +73,7 @@ class SawyerEnv(Env, Serializable):
         self.thresh = True
 
     def set_safety_box(self,
-                       pos_low = np.array([0.53, -.32, 0.35]),
+                       pos_low = np.array([0.55, -.32, 0.35]),
                        pos_high = np.array([0.75, 0.32, 0.5]),
                        torq_low = np.array([0.2, -0.2, .03]),
                        torq_high = np.array([0.6, 0.2, 0.5]),
