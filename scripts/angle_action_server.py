@@ -66,8 +66,8 @@ class JointSprings(object):
                  rate = 1000.0,
                  missed_cmds = 20.0,
                  des_angles = dict(),
-                 max_stiffness = 20,
-                 time_to_maxstiffness=0.3,
+                 max_stiffness = 50,
+                 time_to_maxstiffness=0.1,
                  ):
 
         # control parameters
@@ -87,7 +87,7 @@ class JointSprings(object):
         self.t_release = rospy.get_time()
         self._imp_ctrl_is_active = True
         for joint in self._limb.joint_names():
-            self._springs[joint] = 100
+            self._springs[joint] = 30
             self._damping[joint] = 4
 
     def _imp_ctrl_active(self, inp):
@@ -135,7 +135,6 @@ class JointSprings(object):
         cur_pos = self._limb.joint_angles()
         cur_vel = self._limb.joint_velocities()
         # calculate current forces
-        import ipdb; ipdb.set_trace()
         for joint in self._des_angles.keys():
             # spring portion
             cmd[joint] = self._springs[joint] * (self._des_angles[joint] -
@@ -146,6 +145,7 @@ class JointSprings(object):
         # command new joint torques
         if self._imp_ctrl_is_active:
             self._limb.set_joint_torques(cmd)
+
 
     def move_to_neutral(self):
         """
@@ -159,7 +159,7 @@ class JointSprings(object):
         joint positions.
         """
         # record initial joint angles
-        self._des_angles = self._limb.joint_angles()
+        #self._des_angles = self._limb.joint_angles()
 
         # set control rate
         control_rate = rospy.Rate(self._rate)
@@ -169,7 +169,7 @@ class JointSprings(object):
         # will timeout and disable
         self._limb.set_command_timeout((1.0 / self._rate) * self._missed_cmds)
         # loop at specified rate commanding new joint torques
-        for i in range(1000):
+        for i in range(250):
             self._update_forces()
             control_rate.sleep()
 
@@ -191,7 +191,6 @@ def execute_action(action_msg):
     joint_space_impd = action_msg.joint_space_impd
     joint_names = arm.joint_names()
     joint_to_values = dict(zip(joint_names, action))
-    import ipdb; ipdb.set_trace()
     if joint_space_impd:
         js._des_angles = joint_to_values
         js.attach_springs()

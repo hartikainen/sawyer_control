@@ -101,6 +101,7 @@ class SawyerEnv(Env, Serializable):
         target_ee_pos = np.clip(target_ee_pos, self.ee_safety_box_low, self.ee_safety_box_high)
         target_ee_pos = np.concatenate((target_ee_pos, ee_pos[3:]))
         angles = self.request_ik_angles(target_ee_pos, self._joint_angles())
+        print(target_ee_pos - ee_pos)
         self.send_angle_action(angles)
 
     def _jac_act_damp(self, action):
