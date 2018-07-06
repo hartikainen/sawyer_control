@@ -13,11 +13,15 @@ def compute_joint_angle(req):
     curr_joint_angles = req.curr_joint_angles
 
     Q = Quaternion(
-        x=ee_pos[3],
-        y=ee_pos[4],
-        z=ee_pos[5],
-        w=ee_pos[6],
+        x=0.70833379,
+        y=0.70586246,
+        z=-0.00452118,
+        w=-0.00097029,
     )
+
+
+
+
 
     pose = get_pose_stamped(ee_pos[0], ee_pos[1], ee_pos[2], Q)
     curr_joint_angles = dict(zip(joint_names, curr_joint_angles))
