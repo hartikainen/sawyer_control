@@ -111,12 +111,6 @@ class JointSprings(object):
         if self._imp_ctrl_is_active:
             self._limb.set_joint_torques(cmd)
 
-    def move_to_neutral(self):
-        """
-        Moves the limb to neutral location.
-        """
-        self._limb.move_to_neutral()
-
     def attach_springs(self):
         """
         Switches to joint torque mode and attached joint springs to current
@@ -141,29 +135,3 @@ class JointSprings(object):
                 break
             self._update_forces()
             control_rate.sleep()
-
-    def clean_shutdown(self):
-        """
-        Switches out of joint torque mode to exit cleanly
-        """
-        print("\nExiting example...")
-        self._limb.exit_control_mode()
-        if not self._init_state and self._rs.state().enabled:
-            print("Disabling robot...")
-            self._rs.disable()
-
-
-def main():
-
-
-    # Starting node connection to ROS
-    rospy.init_node('joint_space_impd')
-
-    js = JointSprings(limb = 'right')
-    # register shutdown callback
-    rospy.on_shutdown(js.clean_shutdown)
-    js.attach_springs()
-
-
-if __name__ == "__main__":
-    main()

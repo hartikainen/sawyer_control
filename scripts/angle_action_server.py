@@ -20,14 +20,11 @@ class JointController(object):
 
         # control parameters
         self._rate = rate # Hz
-
         # create our limb instance
         self._limb = limb
-
         # initialize parameters
         self.imp_ctrl_publisher = rospy.Publisher('/desired_joint_pos', JointState, queue_size=1)
         self.imp_ctrl_release_spring_pub = rospy.Publisher('/release_spring', Float32, queue_size=10)
-
 
     def move_with_impedance(self, des_joint_angles):
         """
@@ -38,9 +35,8 @@ class JointController(object):
         js.position = [des_joint_angles[n] for n in js.name]
         self.imp_ctrl_publisher.publish(js)
 
-
     def move_with_impedance_sec(self, cmd, duration=2.0):
-        jointnames = self._limb.joint_names()
+        jointnames = cmd.keys()
         prev_joint = [self._limb.joint_angle(j) for j in jointnames]
         new_joint = np.array([cmd[j] for j in jointnames])
         control_rate = rospy.Rate(self._rate)

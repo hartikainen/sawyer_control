@@ -309,7 +309,6 @@ class SawyerBaseEnv(gym.Env, Serializable, MultitaskEnv, metaclass=abc.ABCMeta):
         self.action_publisher.publish(action)
 
     def send_angle_action(self, action):
-
         self.request_angle_action(action)
 
     def request_image(self):
