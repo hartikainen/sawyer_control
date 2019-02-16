@@ -1,0 +1,4 @@
+uint8 start_recording
+uint8 stop_recording
+string video_path
+---

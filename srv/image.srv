@@ -1,2 +1,2 @@
 ---
-float32[] image
+uint8[] image

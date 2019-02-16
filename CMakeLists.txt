@@ -62,6 +62,7 @@ catkin_python_setup()
    ik.srv
    get_kinectdata.srv
    image.srv
+   video.srv
    angle_action.srv
  )
 
